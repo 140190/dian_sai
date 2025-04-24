@@ -43,6 +43,9 @@ const char* updateIndex =
   "</body>"
   "</html>";
 
+  
+  int8_t angle =0;
+  extern float _pulse_x, _pulse_y, _pulse_z;
 
 void handleRoot() {
   server.sendHeader("Location", "/update");
@@ -52,7 +55,7 @@ void handleRoot() {
 void setup() {
   Serial.begin(9600); // 初始化串口，波特率为115200
   Serial.println("Booting...");
-
+  
   // 将 ESP32 设置为 AP 模式并指定静态 IP 地址
   WiFi.softAP(ssid, password);
   WiFi.softAPConfig(local_IP, gateway, IPAddress(255, 255, 255, 0));
@@ -115,7 +118,7 @@ void setup() {
   // tft.drawRect(2, 20, 100, 20, TFT_BROWN);
 
   motor_ser.begin(115200, SERIAL_8N1, RX1, TX1);
-  
+
   delay(100);
   Chassis_Enable(true);
   // delay(2000);  
@@ -125,8 +128,8 @@ void setup() {
   // delay(200);
   // Chassis_Incremental_Position(300,0,0);  
   // delay(200);  
-  // Chassis_Incremental_Position(0,0,360);
-  // delay(200);  
+  Chassis_Incremental_Position(0,0,20);
+  delay(2000);  
   // Chassis_Incremental_Position(300,0,0);
   // delay(200);  
   // Chassis_Incremental_Position(300,0,0);  
@@ -137,6 +140,7 @@ void setup() {
 
 void loop() {
   server.handleClient();
-
+  Serial.println(_pulse_z);
+  delay(1000);
 }
 
