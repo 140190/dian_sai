@@ -6,7 +6,9 @@
 #include <U8g2lib.h>
 #include <Arduino.h>
 
-U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ 19, /* data=*/ 18, /* reset=*/ U8X8_PIN_NONE);
+#define SCL 19 // SCL 引脚
+#define SDA 18 // SDA 引脚
+U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);
 
 
 //char text[30];
