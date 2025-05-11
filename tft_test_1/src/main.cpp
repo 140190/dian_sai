@@ -13,7 +13,7 @@
 
 
 void setup() {
-  Serial.begin(9600);
+  //Serial.begin(9600);
   pinMode(buttonPin, INPUT_PULLUP);  // 启用内部上拉电阻
   tft_init();
   // 设置字体
@@ -54,8 +54,9 @@ void loop() {
   //   IDIndex = IDIndex + 1;
   //   tft.drawFastVLine(55, 20, 280, TFT_WHITE);  // 列分隔线
   //   delay(1000);  // 模拟1秒更新一次
-  static int currentIndex = 0;
-        if (SerialBT.available()) {
+
+        if (SerialBT.available()) 
+        {
           if(n==0)
           {
             String received = SerialBT.readStringUntil('\n');
@@ -67,13 +68,16 @@ void loop() {
       
               // 更新显示屏
               updateDisplay1(itemArray[currentIndex].number);
-      
-              // 更新索引，超出数组长度后从头开始
-              currentIndex = (currentIndex + 1);
+              
+              // 更新索引，超出数组长度后置一，准备进入第二模式
+              currentIndex = currentIndex + 1;
+
+            
+           
               if(currentIndex==12)
               {
                 n=1;
-                currentIndex=0;
+
 
               }
             }
@@ -86,9 +90,9 @@ void loop() {
             uint8_t value = received.toInt();
             for(int i=0;i<12;i++)
             {
-              if(itemArray[i].number==value);
+              if(itemArray[i].number==value)
               {
-                updateDisplay(itemArray->address, itemArray->number);
+                updateDisplay(itemArray[i].address, itemArray[i].number);
 
               }
             }
@@ -105,8 +109,29 @@ void loop() {
           SerialBT.setPin(hc06Password);
     
           bool connected =  SerialBT.connect(address);
-      
-        
+          if (!connected) {
+            tft.fillRect(0, 0, 500, 500, TFT_BLACK);
+            tft.setCursor(10, 50);
+            tft.println("Connection failed");
+            tft.setCursor(10, 80);
+            tft.print("Retrying...");
+            
+            // 添加重试逻辑
+            int retryCount = 0;
+            while (!connected && retryCount < 5) { // 最多重试5次
+              delay(2000); // 2秒后重试
+              SerialBT.setPin(hc06Password);
+    
+              connected =  SerialBT.connect(address);
+              retryCount++;
+              
+              // 更新重试提示
+              tft.fillRect(10, 80, 200, 20, TFT_BLACK);
+              tft.setCursor(10, 80);
+              tft.print("Retry attempt ");
+              tft.print(retryCount);
+            }
+          }
           if (connected) {
             tft.fillRect(0, 0, 500, 500, TFT_BLACK);
             tft.setCursor(130, 10);
@@ -117,10 +142,19 @@ void loop() {
           }
             n++;
             tft.println(n);
-        }
-  // }
-        key_scan();
-    }
+        
+  // }   tft.setTextSize(2);
+
+       }
+    tft.setTextSize(2);
+    tft.setCursor(150, 0);
+    tft.print(currentIndex);
+    tft.setCursor(170, 0);
+    tft.print("n");
+    tft.setCursor(190, 0);
+    tft.print(n);
+          key_scan();
+  }
 
 
 
